@@ -33,8 +33,6 @@ $(document).ready(function() {
       events: '/schedule/api/occurrences?calendar_slug=bobs-calendar',
       eventClick: function(calEvent, jsEvent, view) {
         alert('Event: ' + calEvent);
-        alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
-        alert('View: ' + view.name);
       },
       dayClick: function(date) {
         alert("Create Event")
