@@ -1,74 +1,20 @@
 
 # FullCalendar
 
-Full-sized drag & drop calendar in JavaScript
+A full-sized drag & drop event calendar (jQuery plugin). [Project website &raquo;](http://fullcalendar.io/)
 
-- [Project Website](https://fullcalendar.io/)
-- [Documentation](https://fullcalendar.io/docs)
-- [Changelog](CHANGELOG.md)
-- [Support](https://fullcalendar.io/support)
-- [License](LICENSE.md)
-- [Roadmap](https://fullcalendar.io/roadmap)
+**This is the 3.x version of FullCalendar**. 4.x has since been released. It removes jquery and moment as dependencies, revamps the API, and breaks FullCalendar's functionality into separate packages:
 
-Connectors:
+- [@fullcalendar/core](https://www.npmjs.com/package/@fullcalendar/core)
+- [@fullcalendar/interaction](https://www.npmjs.com/package/@fullcalendar/interaction)
+- [@fullcalendar/daygrid](https://www.npmjs.com/package/@fullcalendar/daygrid)
+- [@fullcalendar/timegrid](https://www.npmjs.com/package/@fullcalendar/timegrid)
+- [@fullcalendar/list](https://www.npmjs.com/package/@fullcalendar/list)
+- [@fullcalendar/google-calendar](https://www.npmjs.com/package/@fullcalendar/google-calendar)
+- [@fullcalendar/rrule](https://www.npmjs.com/package/@fullcalendar/rrule)
+- [@fullcalendar/luxon](https://www.npmjs.com/package/@fullcalendar/luxon)
+- [@fullcalendar/moment](https://www.npmjs.com/package/@fullcalendar/moment)
+- [@fullcalendar/moment-timezone](https://www.npmjs.com/package/@fullcalendar/moment-timezone)
+- [@fullcalendar/bootstrap](https://www.npmjs.com/package/@fullcalendar/bootstrap)
 
-- [React](https://github.com/fullcalendar/fullcalendar-react)
-- [Angular](https://github.com/fullcalendar/fullcalendar-angular)
-- [Vue 3](https://github.com/fullcalendar/fullcalendar-vue) |
-  [2](https://github.com/fullcalendar/fullcalendar-vue2)
-
-## Bundle
-
-The [FullCalendar Standard Bundle](bundle) is easier to install than individual plugins, though filesize will be larger. It works well with a CDN.
-
-## Installation
-
-Install the FullCalendar core package and any plugins you plan to use:
-
-```sh
-npm install @fullcalendar/core @fullcalendar/interaction @fullcalendar/daygrid
-```
-
-## Usage
-
-Instantiate a Calendar with plugins and options:
-
-```js
-import { Calendar } from '@fullcalendar/core'
-import interactionPlugin from '@fullcalendar/interaction'
-import dayGridPlugin from '@fullcalendar/daygrid'
-
-const calendarEl = document.getElementById('calendar')
-const calendar = new Calendar(calendarEl, {
-  plugins: [
-    interactionPlugin,
-    dayGridPlugin
-  ],
-  initialView: 'timeGridWeek',
-  editable: true,
-  events: [
-    { title: 'Meeting', start: new Date() }
-  ]
-})
-
-calendar.render()
-```
-
-## Development
-
-You must install this repo with [PNPM](https://pnpm.io/):
-
-```
-pnpm install
-```
-
-Available scripts (via `pnpm run <script>`):
-
-- `build` - build production-ready dist files
-- `dev` - build & watch development dist files
-- `test` - test headlessly
-- `test:dev` - test interactively
-- `lint`
-- `clean`
-
-[Info about contributing code &raquo;](CONTRIBUTING.md)
+For more info, [view the upgrade guide &raquo;](https://fullcalendar.io/docs/upgrading-from-v3)

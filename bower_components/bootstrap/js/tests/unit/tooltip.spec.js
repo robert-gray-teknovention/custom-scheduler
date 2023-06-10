@@ -1,7 +1,7 @@
-import Tooltip from '../../src/tooltip'
-import EventHandler from '../../src/dom/event-handler'
-import { noop } from '../../src/util/index'
-import { clearFixture, createEvent, getFixture, jQueryMock } from '../helpers/fixture'
+import EventHandler from '../../src/dom/event-handler.js'
+import Tooltip from '../../src/tooltip.js'
+import { noop } from '../../src/util/index.js'
+import { clearFixture, createEvent, getFixture, jQueryMock } from '../helpers/fixture.js'
 
 describe('Tooltip', () => {
   let fixtureEl
@@ -56,7 +56,7 @@ describe('Tooltip', () => {
 
   describe('constructor', () => {
     it('should take care of element either passed as a CSS selector or DOM element', () => {
-      fixtureEl.innerHTML = '<a href="#" id="tooltipEl" rel="tooltip" title="Nice and short title">'
+      fixtureEl.innerHTML = '<a href="#" id="tooltipEl" rel="tooltip" title="Nice and short title"></a>'
 
       const tooltipEl = fixtureEl.querySelector('#tooltipEl')
       const tooltipBySelector = new Tooltip('#tooltipEl')
@@ -67,7 +67,7 @@ describe('Tooltip', () => {
     })
 
     it('should not take care of disallowed data attributes', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip" data-bs-sanitize="false" title="Another tooltip">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip" data-bs-sanitize="false" title="Another tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const tooltip = new Tooltip(tooltipEl)
@@ -76,7 +76,7 @@ describe('Tooltip', () => {
     })
 
     it('should convert title and content to string if numbers', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const tooltip = new Tooltip(tooltipEl, {
@@ -98,7 +98,7 @@ describe('Tooltip', () => {
           trigger: 'click'
         })
 
-        containerEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        containerEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipInContainerEl = containerEl.querySelector('a')
 
@@ -114,7 +114,7 @@ describe('Tooltip', () => {
 
     it('should create offset modifier when offset is passed as a function', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Offset from function">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Offset from function"></a>'
 
         const getOffset = jasmine.createSpy('getOffset').and.returnValue([10, 20])
         const tooltipEl = fixtureEl.querySelector('a')
@@ -141,7 +141,7 @@ describe('Tooltip', () => {
     })
 
     it('should create offset modifier when offset option is passed in data attribute', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip" data-bs-offset="10,20" title="Another tooltip">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip" data-bs-offset="10,20" title="Another tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const tooltip = new Tooltip(tooltipEl)
@@ -150,7 +150,7 @@ describe('Tooltip', () => {
     })
 
     it('should allow to pass config to Popper with `popperConfig`', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const tooltip = new Tooltip(tooltipEl, {
@@ -165,7 +165,7 @@ describe('Tooltip', () => {
     })
 
     it('should allow to pass config to Popper with `popperConfig` as a function', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const getPopperConfig = jasmine.createSpy('getPopperConfig').and.returnValue({ placement: 'left' })
@@ -192,7 +192,7 @@ describe('Tooltip', () => {
   describe('enable', () => {
     it('should enable a tooltip', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl)
@@ -212,7 +212,7 @@ describe('Tooltip', () => {
   describe('disable', () => {
     it('should disable tooltip', () => {
       return new Promise((resolve, reject) => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl)
@@ -235,7 +235,7 @@ describe('Tooltip', () => {
 
   describe('toggleEnabled', () => {
     it('should toggle enabled', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const tooltip = new Tooltip(tooltipEl)
@@ -251,7 +251,7 @@ describe('Tooltip', () => {
   describe('toggle', () => {
     it('should do nothing if disabled', () => {
       return new Promise((resolve, reject) => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl)
@@ -273,7 +273,7 @@ describe('Tooltip', () => {
 
     it('should show a tooltip', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl)
@@ -289,7 +289,7 @@ describe('Tooltip', () => {
 
     it('should call toggle and show the tooltip when trigger is "click"', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl, {
@@ -309,7 +309,7 @@ describe('Tooltip', () => {
 
     it('should hide a tooltip', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl)
@@ -329,7 +329,7 @@ describe('Tooltip', () => {
 
     it('should call toggle and hide the tooltip when trigger is "click"', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl, {
@@ -354,7 +354,7 @@ describe('Tooltip', () => {
 
   describe('dispose', () => {
     it('should destroy a tooltip', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const addEventSpy = spyOn(tooltipEl, 'addEventListener').and.callThrough()
@@ -381,7 +381,7 @@ describe('Tooltip', () => {
 
     it('should destroy a tooltip after it is shown and hidden', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl)
@@ -402,7 +402,7 @@ describe('Tooltip', () => {
 
     it('should destroy a tooltip and remove it from the dom', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl)
@@ -419,12 +419,31 @@ describe('Tooltip', () => {
         tooltip.show()
       })
     })
+
+    it('should destroy a tooltip and reset it\'s initial title', () => {
+      fixtureEl.innerHTML = [
+        '<span id="tooltipWithTitle" rel="tooltip" title="tooltipTitle"></span>',
+        '<span id="tooltipWithoutTitle" rel="tooltip" data-bs-title="tooltipTitle"></span>'
+      ].join('')
+
+      const tooltipWithTitleEl = fixtureEl.querySelector('#tooltipWithTitle')
+      const tooltip = new Tooltip('#tooltipWithTitle')
+      expect(tooltipWithTitleEl.getAttribute('title')).toBeNull()
+      tooltip.dispose()
+      expect(tooltipWithTitleEl.getAttribute('title')).toBe('tooltipTitle')
+
+      const tooltipWithoutTitleEl = fixtureEl.querySelector('#tooltipWithoutTitle')
+      const tooltip2 = new Tooltip('#tooltipWithTitle')
+      expect(tooltipWithoutTitleEl.getAttribute('title')).toBeNull()
+      tooltip2.dispose()
+      expect(tooltipWithoutTitleEl.getAttribute('title')).toBeNull()
+    })
   })
 
   describe('show', () => {
     it('should show a tooltip', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl)
@@ -469,7 +488,7 @@ describe('Tooltip', () => {
 
     it('should show a tooltip on mobile', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl)
@@ -490,7 +509,7 @@ describe('Tooltip', () => {
 
     it('should show a tooltip relative to placement option', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl, {
@@ -513,7 +532,7 @@ describe('Tooltip', () => {
 
     it('should not error when trying to show a tooltip that has been removed from the dom', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl)
@@ -542,7 +561,7 @@ describe('Tooltip', () => {
 
     it('should show a tooltip with a dom element container', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl, {
@@ -560,7 +579,7 @@ describe('Tooltip', () => {
 
     it('should show a tooltip with a jquery element container', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl, {
@@ -581,7 +600,7 @@ describe('Tooltip', () => {
 
     it('should show a tooltip with a selector in container', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl, {
@@ -599,7 +618,7 @@ describe('Tooltip', () => {
 
     it('should show a tooltip with placement as a function', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const spy = jasmine.createSpy('placement').and.returnValue('top')
         const tooltipEl = fixtureEl.querySelector('a')
@@ -619,7 +638,7 @@ describe('Tooltip', () => {
 
     it('should show a tooltip without the animation', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl, {
@@ -639,7 +658,7 @@ describe('Tooltip', () => {
     })
 
     it('should throw an error the element is not visible', () => {
-      fixtureEl.innerHTML = '<a href="#" style="display: none" rel="tooltip" title="Another tooltip">'
+      fixtureEl.innerHTML = '<a href="#" style="display: none" rel="tooltip" title="Another tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const tooltip = new Tooltip(tooltipEl)
@@ -653,7 +672,7 @@ describe('Tooltip', () => {
 
     it('should not show a tooltip if show.bs.tooltip is prevented', () => {
       return new Promise((resolve, reject) => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl)
@@ -680,7 +699,7 @@ describe('Tooltip', () => {
 
     it('should show tooltip if leave event hasn\'t occurred before delay expires', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl, {
@@ -704,7 +723,7 @@ describe('Tooltip', () => {
 
     it('should not show tooltip if leave event occurs before delay expires', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl, {
@@ -826,7 +845,7 @@ describe('Tooltip', () => {
 
     it('should only trigger inserted event if a new tooltip element was created', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl)
@@ -859,7 +878,7 @@ describe('Tooltip', () => {
 
     it('should show a tooltip with custom class provided in data attributes', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip" data-bs-custom-class="custom-class">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip" data-bs-custom-class="custom-class"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl)
@@ -877,7 +896,7 @@ describe('Tooltip', () => {
 
     it('should show a tooltip with custom class provided as a string in config', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl, {
@@ -898,7 +917,7 @@ describe('Tooltip', () => {
 
     it('should show a tooltip with custom class provided as a function in config', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const spy = jasmine.createSpy('customClass').and.returnValue('custom-class')
         const tooltipEl = fixtureEl.querySelector('a')
@@ -937,7 +956,7 @@ describe('Tooltip', () => {
   describe('hide', () => {
     it('should hide a tooltip', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl)
@@ -955,7 +974,7 @@ describe('Tooltip', () => {
 
     it('should hide a tooltip on mobile', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl)
@@ -979,7 +998,7 @@ describe('Tooltip', () => {
 
     it('should hide a tooltip without animation', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl, {
@@ -999,7 +1018,7 @@ describe('Tooltip', () => {
 
     it('should not hide a tooltip if hide event is prevented', () => {
       return new Promise((resolve, reject) => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const assertDone = () => {
           setTimeout(() => {
@@ -1044,7 +1063,7 @@ describe('Tooltip', () => {
   describe('update', () => {
     it('should call popper update', () => {
       return new Promise(resolve => {
-        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+        fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
         const tooltipEl = fixtureEl.querySelector('a')
         const tooltip = new Tooltip(tooltipEl)
@@ -1063,7 +1082,7 @@ describe('Tooltip', () => {
     })
 
     it('should do nothing if the tooltip is not shown', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const tooltip = new Tooltip(tooltipEl)
@@ -1075,7 +1094,7 @@ describe('Tooltip', () => {
 
   describe('_isWithContent', () => {
     it('should return true if there is content', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const tooltip = new Tooltip(tooltipEl)
@@ -1084,7 +1103,7 @@ describe('Tooltip', () => {
     })
 
     it('should return false if there is no content', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title=""></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const tooltip = new Tooltip(tooltipEl)
@@ -1095,7 +1114,7 @@ describe('Tooltip', () => {
 
   describe('_getTipElement', () => {
     it('should create the tip element and return it', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const tooltip = new Tooltip(tooltipEl)
@@ -1107,7 +1126,7 @@ describe('Tooltip', () => {
     })
 
     it('should return the created tip element', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const tooltip = new Tooltip(tooltipEl)
@@ -1126,7 +1145,7 @@ describe('Tooltip', () => {
 
   describe('setContent', () => {
     it('should set tip content', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const tooltip = new Tooltip(tooltipEl, { animation: false })
@@ -1141,7 +1160,7 @@ describe('Tooltip', () => {
     })
 
     it('should re-show tip if it was already shown', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip" data-bs-title="Another tooltip">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip" data-bs-title="Another tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const tooltip = new Tooltip(tooltipEl)
@@ -1156,7 +1175,7 @@ describe('Tooltip', () => {
     })
 
     it('should keep tip hidden, if it was already hidden before', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip" data-bs-title="Another tooltip">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip" data-bs-title="Another tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const tooltip = new Tooltip(tooltipEl)
@@ -1171,7 +1190,7 @@ describe('Tooltip', () => {
     })
 
     it('"setContent" should keep the initial template', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const tooltip = new Tooltip(tooltipEl)
@@ -1188,7 +1207,7 @@ describe('Tooltip', () => {
 
   describe('setContent', () => {
     it('should do nothing if the element is null', () => {
-      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip">'
+      fixtureEl.innerHTML = '<a href="#" rel="tooltip" title="Another tooltip"></a>'
 
       const tooltipEl = fixtureEl.querySelector('a')
       const tooltip = new Tooltip(tooltipEl)

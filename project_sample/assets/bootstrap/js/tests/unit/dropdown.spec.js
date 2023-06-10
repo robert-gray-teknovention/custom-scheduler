@@ -1,7 +1,7 @@
-import Dropdown from '../../src/dropdown'
-import EventHandler from '../../src/dom/event-handler'
-import { noop } from '../../src/util/index'
-import { clearFixture, createEvent, getFixture, jQueryMock } from '../helpers/fixture'
+import EventHandler from '../../src/dom/event-handler.js'
+import Dropdown from '../../src/dropdown.js'
+import { noop } from '../../src/util/index.js'
+import { clearFixture, createEvent, getFixture, jQueryMock } from '../helpers/fixture.js'
 
 describe('Dropdown', () => {
   let fixtureEl
@@ -55,6 +55,29 @@ describe('Dropdown', () => {
 
       expect(dropdownBySelector._element).toEqual(btnDropdown)
       expect(dropdownByElement._element).toEqual(btnDropdown)
+    })
+
+    it('should work on invalid markup', () => {
+      return new Promise(resolve => {
+        // TODO: REMOVE in v6
+        fixtureEl.innerHTML = [
+          '<div class="dropdown">',
+          '  <div class="dropdown-menu">',
+          '    <a class="dropdown-item" href="#">Link</a>',
+          '  </div>',
+          '</div>'
+        ].join('')
+
+        const dropdownElem = fixtureEl.querySelector('.dropdown-menu')
+        const dropdown = new Dropdown(dropdownElem)
+
+        dropdownElem.addEventListener('shown.bs.dropdown', () => {
+          resolve()
+        })
+
+        expect().nothing()
+        dropdown.show()
+      })
     })
 
     it('should create offset modifier correctly when offset option is a function', () => {
@@ -1456,6 +1479,67 @@ describe('Dropdown', () => {
 
         triggerDropdownFirst.click()
       })
+    })
+
+    it('should be able to identify clicked dropdown, even with multiple dropdowns in the same tag', () => {
+      fixtureEl.innerHTML = [
+        '<div class="dropdown">',
+        '  <button id="dropdown1" class="btn dropdown-toggle" data-bs-toggle="dropdown">Dropdown toggle</button>',
+        '  <div id="menu1" class="dropdown-menu">',
+        '    <a class="dropdown-item" href="#">Dropdown item</a>',
+        '  </div>',
+        '  <button id="dropdown2" class="btn dropdown-toggle" data-bs-toggle="dropdown">Dropdown toggle</button>',
+        '  <div id="menu2" class="dropdown-menu">',
+        '    <a class="dropdown-item" href="#">Dropdown item</a>',
+        '  </div>',
+        '</div>'
+      ].join('')
+
+      const dropdownToggle1 = fixtureEl.querySelector('#dropdown1')
+      const dropdownToggle2 = fixtureEl.querySelector('#dropdown2')
+      const dropdownMenu1 = fixtureEl.querySelector('#menu1')
+      const dropdownMenu2 = fixtureEl.querySelector('#menu2')
+      const spy = spyOn(Dropdown, 'getOrCreateInstance').and.callThrough()
+
+      dropdownToggle1.click()
+      expect(spy).toHaveBeenCalledWith(dropdownToggle1)
+
+      dropdownToggle2.click()
+      expect(spy).toHaveBeenCalledWith(dropdownToggle2)
+
+      dropdownMenu1.click()
+      expect(spy).toHaveBeenCalledWith(dropdownToggle1)
+
+      dropdownMenu2.click()
+      expect(spy).toHaveBeenCalledWith(dropdownToggle2)
+    })
+
+    it('should be able to show the proper menu, even with multiple dropdowns in the same tag', () => {
+      fixtureEl.innerHTML = [
+        '<div class="dropdown">',
+        '  <button id="dropdown1" class="btn dropdown-toggle" data-bs-toggle="dropdown">Dropdown toggle</button>',
+        '  <div id="menu1" class="dropdown-menu">',
+        '    <a class="dropdown-item" href="#">Dropdown item</a>',
+        '  </div>',
+        '  <button id="dropdown2" class="btn dropdown-toggle" data-bs-toggle="dropdown">Dropdown toggle</button>',
+        '  <div id="menu2" class="dropdown-menu">',
+        '    <a class="dropdown-item" href="#">Dropdown item</a>',
+        '  </div>',
+        '</div>'
+      ].join('')
+
+      const dropdownToggle1 = fixtureEl.querySelector('#dropdown1')
+      const dropdownToggle2 = fixtureEl.querySelector('#dropdown2')
+      const dropdownMenu1 = fixtureEl.querySelector('#menu1')
+      const dropdownMenu2 = fixtureEl.querySelector('#menu2')
+
+      dropdownToggle1.click()
+      expect(dropdownMenu1).toHaveClass('show')
+      expect(dropdownMenu2).not.toHaveClass('show')
+
+      dropdownToggle2.click()
+      expect(dropdownMenu1).not.toHaveClass('show')
+      expect(dropdownMenu2).toHaveClass('show')
     })
 
     it('should fire hide and hidden event without a clickEvent if event type is not click', () => {

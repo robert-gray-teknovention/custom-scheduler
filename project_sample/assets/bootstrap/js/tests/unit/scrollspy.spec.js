@@ -1,8 +1,6 @@
-import ScrollSpy from '../../src/scrollspy'
-
-/** Test helpers */
-import { clearFixture, createEvent, getFixture, jQueryMock } from '../helpers/fixture'
-import EventHandler from '../../src/dom/event-handler'
+import EventHandler from '../../src/dom/event-handler.js'
+import ScrollSpy from '../../src/scrollspy.js'
+import { clearFixture, createEvent, getFixture, jQueryMock } from '../helpers/fixture.js'
 
 describe('ScrollSpy', () => {
   let fixtureEl
@@ -124,6 +122,50 @@ describe('ScrollSpy', () => {
 
       expect(scrollSpy._observer.root).toBeNull()
       expect(scrollSpy._rootElement).toBeNull()
+    })
+
+    it('should respect threshold option', () => {
+      fixtureEl.innerHTML = [
+        '<ul id="navigation" class="navbar">',
+        '   <a class="nav-link active" id="one-link" href="#">One</a>' +
+        '</ul>',
+        '<div id="content">',
+        '  <div id="one-link">test</div>',
+        '</div>'
+      ].join('')
+
+      const scrollSpy = new ScrollSpy('#content', {
+        target: '#navigation',
+        threshold: [1]
+      })
+
+      expect(scrollSpy._observer.thresholds).toEqual([1])
+    })
+
+    it('should respect threshold option markup', () => {
+      fixtureEl.innerHTML = [
+        '<ul id="navigation" class="navbar">',
+        '   <a class="nav-link active" id="one-link" href="#">One</a>' +
+        '</ul>',
+        '<div id="content" data-bs-threshold="0,0.2,1">',
+        '  <div id="one-link">test</div>',
+        '</div>'
+      ].join('')
+
+      const scrollSpy = new ScrollSpy('#content', {
+        target: '#navigation'
+      })
+
+      // See https://stackoverflow.com/a/45592926
+      const expectToBeCloseToArray = (actual, expected) => {
+        expect(actual.length).toBe(expected.length)
+        for (const x of actual) {
+          const i = actual.indexOf(x)
+          expect(x).withContext(`[${i}]`).toBeCloseTo(expected[i])
+        }
+      }
+
+      expectToBeCloseToArray(scrollSpy._observer.thresholds, [0, 0.2, 1])
     })
 
     it('should not take count to not visible sections', () => {
@@ -880,6 +922,40 @@ describe('ScrollSpy', () => {
       const div = fixtureEl.querySelector('.content')
       const link = fixtureEl.querySelector('[href="#div-jsm-1"]')
       const observable = fixtureEl.querySelector('#div-jsm-1')
+      const clickSpy = getElementScrollSpy(div)
+      // eslint-disable-next-line no-new
+      new ScrollSpy(div, {
+        offset: 1,
+        smoothScroll: true
+      })
+
+      setTimeout(() => {
+        if (div.scrollTo) {
+          expect(clickSpy).toHaveBeenCalledWith({ top: observable.offsetTop - div.offsetTop, behavior: 'smooth' })
+        } else {
+          expect(clickSpy).toHaveBeenCalledWith(observable.offsetTop - div.offsetTop)
+        }
+
+        done()
+      }, 100)
+      link.click()
+    })
+
+    it('should smoothscroll to observable with anchor link that contains a french word as id', done => {
+      fixtureEl.innerHTML = [
+        '<nav id="navBar" class="navbar">',
+        '  <ul class="nav">',
+        '    <li class="nav-item"><a id="li-jsm-1" class="nav-link" href="#présentation">div 1</a></li>',
+        '  </ul>',
+        '</nav>',
+        '<div class="content" data-bs-target="#navBar" style="overflow-y: auto">',
+        '  <div id="présentation">div 1</div>',
+        '</div>'
+      ].join('')
+
+      const div = fixtureEl.querySelector('.content')
+      const link = fixtureEl.querySelector('[href="#présentation"]')
+      const observable = fixtureEl.querySelector('#présentation')
       const clickSpy = getElementScrollSpy(div)
       // eslint-disable-next-line no-new
       new ScrollSpy(div, {
