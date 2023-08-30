@@ -10,17 +10,6 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-#        'NAME': os.path.join(PROJECT_PATH, 'project_sample.db'),
-#        # The following settings are not used with sqlite3:
-#        'USER': '',
-#        'PASSWORD': '',
-#        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-#        'PORT': '',                      # Set to empty string for default.
-#    }
-#}
 DATABASES = {
    'default': {
       'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -131,7 +120,15 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'djangobower',
     'schedule',
-    'project_sample'
+    'project_sample',
+    'custom_scheduler',
+    'organizations',
+    'employee',
+    'crispy_forms',
+    'crispy_bootstrap5',
+    'rest_framework',
+    'apis',
+    'django_bootstrap_icons',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -167,8 +164,9 @@ LOGGING = {
 BOWER_INSTALLED_APPS = (
     'jquery',
     'jquery-ui',
+    'popper',
     'bootstrap',
-    'fullcalendar#3.10.5'
+    'fullcalendar#3.10.5',
 )
 
 TEMPLATES = [{
@@ -186,3 +184,5 @@ TEMPLATES = [{
         ],
     },
 }]
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'bootstrap5'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
