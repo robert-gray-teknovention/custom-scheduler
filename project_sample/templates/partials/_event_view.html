@@ -1,4 +1,13 @@
 {% load bootstrap_icons %}
+<style media="screen">
+  li::before {
+    content: attr(label);
+    position: relative;
+    left:0;
+    font-weight: bold;
+  }
+
+</style>
 <script type="module">
   import { createPopper } from '@popperjs/core';
   var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
@@ -9,7 +18,7 @@
 </script>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@3.10.5/dist/fullcalendar.min.js'></script>
 <div class="modal fade" id="eventViewModal" role="dialog">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="evenManageModalLabel">Event Occurrence</h5>
@@ -25,7 +34,7 @@
           </li>
           <li class="nav-item">
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-              <span>&times;</span>
+              
             </button>
           </li>
 
@@ -37,7 +46,9 @@
 
 
         function edit() {
-          alert("We are going to edit the thing.");
+          $('#sendBtn').val("Update")
+          $('#eventManageModal').modal('show');
+          $('#eventViewModal').modal('hide');
         };
         function email() {
           alert("We are going to email the thing.");
@@ -51,13 +62,13 @@
             $.ajax({
               type: 'DELETE',
               dataType: 'json',
-              url: '{% url 'event-list'%}'+$('#event_id').val(),
+              url: '{% url 'customevent-list'%}'+$('#event_id').val(),
               success:function(result) {
                 alert("Event Deleted");
                 $('#calendar').fullCalendar('refetchEvents');
               },
               error:function(xhr) {
-                alert("I'm sorry but your message failed to send "  + xhr.status)
+                alert("I'm sorry but your event failed to delete"  + xhr.status)
               }
 
             });
@@ -69,11 +80,37 @@
       <div class="modal-body">
         <input type="hidden" id="id">
         <input type="hidden" id="event_id">
+        <!--<section>
+          <div class="row">
+            <div class="col-xs-12">Title</div>
+            <div class="row">
+              <div id="title" class="col-xs-6">
+              </div>
+            </div>
+            <div class="col-xs-12">Start</div>
+            <div class="row">
+              <div id="start" class="col-xs-6">
+              </div>
+            </div>
+            <div class="col-xs-12">End</div>
+            <div class="row">
+              <div id="end" class="col-xs-6">
+              </div>
+            </div>
+
+
+          </div>
+        </section>-->
         <ul class="list-group">
-          <li class="list-group-item" id="title"></li>
-          <li class="list-group-item" id="start"></li>
-          <li class="list-group-item" id="end"></li>
-          <li class="list-group-item">{% bs_icon 'arrow-repeat' %}<a id='rule'>No Rule</a></li>
+          <li class="list-group-item" id="title" label="Title: "></li>
+          <li class="list-group-item" id="start" label="Start: "></li>
+          <li class="list-group-item" id="end" label="End: "></li>
+          <li class="list-group-item" id="description" label="Description: "></li>
+          <li class="list-group-item" label="Recurring Rule ">{% bs_icon 'arrow-repeat' %}<a id='rule'>No Rule</a></li>
+          <li class="list-group-item" id="end_recurring_period" label="Recurring End: "></li>
+          <li class="list-group-item" id="v_calendar" label="Calendar: "></li>
+          <li class="list-group-item" id="color_event">Event Color</li>
+          <li class="list-group-item" id="event_type" label="Event Type: "></li>
 
         </ul>
       </div>

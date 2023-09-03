@@ -3,11 +3,25 @@ from django.urls import include, path
 from rest_framework import routers
 
 # import everything from views
-from .views import EventViewSet, CalendarViewSet, OrganizationViewSet, EventTypeViewSet, StaffViewSet, StaffTimeViewSet
-from .views import OccurrenceViewSet, BaseEventViewSet, api_move_or_resize_by_code
+from .views import (
+    UserViewSet,
+    RuleViewSet,
+    CustomEventViewSet,
+    CalendarViewSet,
+    OrganizationViewSet,
+    EventTypeViewSet,
+    StaffViewSet,
+    StaffTimeViewSet,
+    OccurrenceViewSet,
+    BaseEventViewSet,
+    api_move_or_resize_by_code,
+    )
+
 router = routers.DefaultRouter()
-router.register(r'events', EventViewSet)
-router.register(r'event_bases', BaseEventViewSet)
+router.register(r'users', UserViewSet)
+router.register(r'rules', RuleViewSet)
+router.register(r'custom_events', CustomEventViewSet)
+router.register(r'base_events', BaseEventViewSet)
 router.register(r'calendars', CalendarViewSet)
 router.register(r'organizations', OrganizationViewSet)
 router.register(r'event_types', EventTypeViewSet)

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from custom_scheduler.models import CustomEvent, Staff, StaffTime
+from custom_scheduler.models import CustomEvent, Staff, StaffTime, EventType
 from custom_scheduler.forms import CustomEventAdminForm
 from schedule.models import Occurrence
 from schedule.admin import EventAdmin
@@ -39,3 +39,9 @@ class CustomEventAdmin(EventAdmin):
     )
     inlines = (StaffTimeAdminInline,)
     form = CustomEventAdminForm
+
+
+@admin.register(EventType)
+class EventTypeAdmin(admin.ModelAdmin):
+    model = EventType
+    list_display = ('name', 'organization',)

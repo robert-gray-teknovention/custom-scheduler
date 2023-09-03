@@ -1,19 +1,18 @@
 
 {% load crispy_forms_tags %}
 <div class="modal fade" id="eventManageModal" role="dialog">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="evenManageModalLabel">Event Dialog</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-          <span>&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <form id="eventForm" method="POST">
           {% csrf_token %}
           {{ eventForm|crispy }}
-          <input type="submit" value="Add" class="btn btn-block btn-primary" name="sendBtn">
+          <input type="submit" value="Add" class="btn btn-block btn-primary" name="sendBtn" id="sendBtn">
 
         </form>
         <script type="text/javascript">
@@ -27,26 +26,43 @@
             e.preventDefault();
             var event = {
               "title": $('#id_title').val(),
+              "description": $('#id_description').val(),
               "start": $('#id_start').val(),
               "end": $('#id_end').val(),
               "rule": $('#id_rule option:selected').val(),
               "end_recurring_period": $('#id_end_recurring_period').val(),
-              "color": $('#id_color_event').val(),
-              "calendar":  getUrl('apis/calendars/', $('#id_calendar option:selected').val()),
-              "event_type": getUrl('apis/event_types/', $('#id_event_type option:selected').val())
+              "color_event": $('#id_color_event').val(),
+              "calendar":  $('#id_calendar option:selected').val(),
+              "event_type": $('#id_event_type option:selected').val(),
+              //"calendar":  getUrl('apis/calendars/', $('#id_calendar option:selected').val()),
+              //"event_type": getUrl('apis/event_types/', $('#id_event_type option:selected').val())
             };
-            console.log("Event color " + event.color_event)
             $.ajaxSetup({
               headers: { "X-CSRFToken": '{{ csrf_token }}' }
             });
+            var ajaxType='POST';
+            var url = '{% url 'customevent-list' %}'
+            if($('#sendBtn').val()!='Add') {
+              ajaxType='PUT';
+              url += $('#event_id').val() + '/';
+              event.id = $('#event_id').val();
+              console.log('Event id' + $('#event_id').val());
+            }
             $.ajax({
-              type: 'POST',
+              type: ajaxType,
               dataType: 'json',
-              url: '/apis/events/',
+              url: url,
               data: event,
               success:function(result) {
-                alert("Event added to calendar.");
-                $('#calendar').fullCalendar('renderEvent', event);
+                if(ajaxType=="POST") {
+                  alert("Event added to calendar.");
+                }
+                else {
+                  alert("Event has been updated.");
+                }
+
+                console.log(JSON.stringify(result));
+                $('#calendar').fullCalendar('refetchEvents');
                 //$(':input', '#mailerForm').not(':button, :submit, :hidden').val('')
                 $('#eventManageModal').modal('hide');
 

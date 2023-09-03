@@ -1,28 +1,16 @@
 # import serializer from rest_framework
 from rest_framework import serializers
-from custom_scheduler.models import CustomEvent as Event, Calendar, EventType, Staff, StaffTime
+from django.contrib.auth.models import User
+from custom_scheduler.models import CustomEvent, Calendar, EventType, Staff, StaffTime
 from organizations.models import Organization
-from schedule.models.events import Occurrence, Event as BaseEvent
+from schedule.models.events import Occurrence, Event as BaseEvent, Calendar as BaseCalendar
+from schedule.models.rules import Rule
 
 
-class BaseEventSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = BaseEvent
-        fields = ('url', 'id', 'title', 'description', 'start', 'end', 'calendar')
-
-
-class EventSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Event
-        fields = ('url', 'id', 'title', 'description', 'start', 'end', 'duration', 'calendar', 'event_type')
-
-
-class CalendarSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-        model = Calendar
-        fields = ('url', 'id', 'name', 'slug', 'organization')
+        model = User
+        fields = 'url', 'id', 'first_name', 'last_name', 'email'
 
 
 class OrganizationSerializer(serializers.HyperlinkedModelSerializer):
@@ -32,19 +20,70 @@ class OrganizationSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('__all__')
 
 
+class CalendarSerializer(serializers.HyperlinkedModelSerializer):
+    organization = OrganizationSerializer()
+
+    class Meta:
+        model = Calendar
+        fields = ('url', 'id', 'name', 'slug', 'organization')
+
+
+class BaseCalendarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BaseCalendar
+        fields = ('__all__')
+
+
+class RuleSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Rule
+        fields = ('url', 'id', 'name', 'description', 'frequency', 'params')
+
+
+class BaseEventSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = BaseEvent
+        fields = ('url', 'id', 'title', 'description', 'start', 'end', 'calendar')
+
+
 class EventTypeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = EventType
+        fields = ('url', 'id', 'name', 'organization')
+
+
+class CustomEventSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CustomEvent
+        fields = ('__all__')
+
+
+class GetCustomEventSerializer(serializers.HyperlinkedModelSerializer):
+    calendar = BaseCalendarSerializer()
+    event_type = EventTypeSerializer()
+    rule = RuleSerializer()
+
+    class Meta:
+        model = CustomEvent
         fields = ('__all__')
 
 
 class StaffSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Staff
-        fields = ('url', 'id', 'name', 'email', 'phone', 'staff_type', 'organization')
+        fields = ('url', 'id', 'user', 'name', 'email', 'phone', 'staff_type', 'organization')
 
 
-class StaffTimeSerializer(serializers.HyperlinkedModelSerializer):
+class StaffTimeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StaffTime
+        fields = ('__all__')
+
+
+class GetStaffTimeSerializer(serializers.HyperlinkedModelSerializer):
+    staff_member = StaffSerializer()
+
     class Meta:
         model = StaffTime
         fields = ('__all__')

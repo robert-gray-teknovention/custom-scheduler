@@ -11,6 +11,7 @@
 {% block extra_head %}
 <link rel='stylesheet' type='text/css' href="{% static 'fullcalendar/dist/fullcalendar.css' %}" />
 <!--<script type='text/javascript' src="{% static 'moment/moment.js' %}"></script>-->
+
 <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js'></script>
 <!--<script type='text/javascript' src="{% static 'fullcalendar/dist/fullcalendar.min.js' %}"></script>-->
 <!--<script type='text/javascript' src="{% static 'fullcalendar/dist/index.global.js' %}"></script> -->
@@ -47,19 +48,7 @@ $(document).ready(function() {
       editable: true,
       events: '/schedule/api/occurrences?calendar_slug=custom',
       eventClick: function(event, jsEvent, view) {
-        //alert('Event id: ' + calEvent['event_id'] + ' start: ' + new Date(calEvent['start']).toString() + ' end: ' + new Date(calEvent['end']).toString() + 'Color: ' + calEvent['creater']);
-        //alert(Object.keys(event));
-        var rule='No repeat';
-        $('#id').val(event.id);
-        $('#event_id').val(event.event_id);
-        $('#title').text(event.title);
-        $('#start').text(event.start);
-        $('#end').text(event.end);
-        if(event.rule){
-          rule=event.rule;
-        }
-        $('#rule').html(rule);
-        $('#eventViewModal').modal('show');
+        loadEventViewModal(event)
       },
       eventDrop: function(event, delta, revertFunc) {
         moveOrResizeEvent(event, delta, null, revertFunc)
@@ -68,7 +57,8 @@ $(document).ready(function() {
         moveOrResizeEvent(event, delta, true, revertFunc)
       },
       dayClick: function(date) {
-
+        $('#eventForm').trigger('reset');
+        $('#sendBtn').val('Add');
         cal_date = date._d.toISOString().substring(0, 11);
         $('#id_start_time').val('00:00')
         $('#id_end_time').val('00:00')
@@ -78,9 +68,61 @@ $(document).ready(function() {
 
       }
     })
-
-
 });
+function loadEventViewModal(event) {
+  $.ajaxSetup({
+    headers: { "X-CSRFToken": '{{ csrf_token }}' }
+  });
+  $.ajax({
+    type: 'GET',
+    dataType: 'json',
+    url: '{% url 'customevent-list' %}' + event.event_id + '/?format=json',
+    success:function(result) {
+      var rule='No repeat';
+      $('#id').val(event.id);
+      $('#event_id').val(event.event_id);
+      $('#title').text(event.title);
+      $('#description').text(event.description);
+      $('#start').text(new Date(event.start).toLocaleString());
+      $('#end').text(new Date(event.end).toLocaleString());
+      if(event.rule){
+        rule=event.rule;
+      }
+      $('#rule').html(rule);
+      $('#v_calendar').text(result.calendar.name);
+      $('#end_recurring_period').text(event.end_recurring_period);
+      $('#color_event').css("background-color", event.color);
+      $('#event_type').text(result.event_type.name);
+      $('#eventViewModal').modal('show');
+      //Load eventManageModal
+      //$('#id').val(event.id);
+      //$('#event_id').val(event.event_id);
+      $('#eventForm').trigger('reset');
+      $('#id_title').val(event.title);
+      $('#id_description').val(event.description);
+      $('#id_start_time').val(result.start.substring(11, 16));
+      $('#id_end_time').val(result.end.substring(11, 16));
+      $('#id_start').val(result.start);
+      $('#id_end').val(result.end);
+      if (result.rule != null) {
+        $('#id_rule').val(result.rule.id).change();
+      }
+      $('#id_calendar').val(result.calendar.id).change();
+      $('#id_end_recurring_period').val(event.end_recurring_period);
+      $('#id_color_event').val(event.color);
+      $('#id_event_type').val(result.event_type.id).change();
+    },
+    error:function(xhr) {
+      alert("I'm sorry but your message failed to send "  + xhr.status)
+    }
+
+  });
+
+
+
+
+}
+
 function moveOrResizeEvent(event, delta, resize, revertFunc) {
   $.ajaxSetup({
     headers: { "X-CSRFToken": '{{ csrf_token }}' }
