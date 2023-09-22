@@ -119,7 +119,6 @@ function loadEventViewModal(event) {
       $('#id_description').val(event.description);
       $('#id_start_time').val(result.start.substring(11, 16));
       $('#id_end_time').val(result.end.substring(11, 16));
-      alert(new Date(event.start).toISOString().substring(0,16));
       $('#id_start').val(new Date(event.start).toISOString().substring(0, 16));
       $('#id_end').val(new Date(event.end).toISOString().substring(0, 16));
       if (result.rule != null) {
