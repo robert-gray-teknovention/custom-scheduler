@@ -138,8 +138,6 @@ class StaffTimeViewSet(viewsets.ModelViewSet):
             data['occurrence'] = ''
             occ_exists = False
         serializer = StaffTimeSerializer(context={'request': request}, data=data)
-        # print(str(serializer.initial_data))
-        print(request.data)
         if serializer.is_valid():
             st = serializer.save()
             if not occ_exists:

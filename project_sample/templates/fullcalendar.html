@@ -119,8 +119,9 @@ function loadEventViewModal(event) {
       $('#id_description').val(event.description);
       $('#id_start_time').val(result.start.substring(11, 16));
       $('#id_end_time').val(result.end.substring(11, 16));
-      $('#id_start').val(result.start);
-      $('#id_end').val(result.end);
+      alert(new Date(event.start).toISOString().substring(0,16));
+      $('#id_start').val(new Date(event.start).toISOString().substring(0, 16));
+      $('#id_end').val(new Date(event.end).toISOString().substring(0, 16));
       if (result.rule != null) {
         $('#id_rule').val(result.rule.id).change();
       }
@@ -144,6 +145,14 @@ function loadEventViewModal(event) {
 
 
 function moveOrResizeEvent(event, delta, resize, revertFunc) {
+  var create_occurrence = false;
+  if (!event.exists && event.rule != null) {
+    //alert(event.rule);
+    if(confirm("Would you like to move just this one occurrence of this event?  If you choose no or cancel then all the recurring events will be moved except for any modified events.")) {
+      create_occurrence = true
+    }
+    //alert("Create occurrence" + create_occurrence);
+  }
   $.ajaxSetup({
     headers: { "X-CSRFToken": '{{ csrf_token }}' }
   });
