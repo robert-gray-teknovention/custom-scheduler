@@ -46,7 +46,6 @@
               ajaxType='PUT';
               url += $('#event_id').val() + '/';
               event.id = $('#event_id').val();
-              console.log('Event id' + $('#event_id').val());
             }
             $.ajax({
               type: ajaxType,
@@ -61,7 +60,6 @@
                   alert("Event has been updated.");
                 }
 
-                console.log(JSON.stringify(result));
                 $('#calendar').fullCalendar('refetchEvents');
                 //$(':input', '#mailerForm').not(':button, :submit, :hidden').val('')
                 $('#eventManageModal').modal('hide');

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from organizations.models import Organization
 from schedule.models.events import Event as BaseEvent, Occurrence
 from schedule.models.calendars import Calendar as BaseCalendar
+from schedule.utils import OccurrenceReplacer
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import post_save
@@ -51,6 +52,10 @@ class CustomEvent(BaseEvent):
         delta = (self.end - self.start)
         self.duration = delta/dt.timedelta(hours=1)
         super(CustomEvent, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        Occurrence.objects.filter(event=self.id).delete()
+        super(CustomEvent, self).delete(*args, **kwargs)
 
     # Had to override get occurrence method because doesn't work with timezones and such
     def get_occurrence(self, date):
@@ -103,27 +108,26 @@ class Staff(models.Model):
 
 
 class StaffTime(models.Model):
-    staff_member = models.OneToOneField(Staff, on_delete=models.CASCADE)
+    staff_member = models.ForeignKey(Staff, on_delete=models.CASCADE, null=True)
     start = models.DateTimeField(auto_now=False)
     end = models.DateTimeField(auto_now=False)
     event = models.ForeignKey(BaseEvent, on_delete=models.CASCADE, null=True)
     occurrence = models.ForeignKey(Occurrence, on_delete=models.CASCADE, related_name="staffing", null=True)
+    occ_start = ''
+    occ_end = ''
 
     def __str__(self):
         return str(self.staff_member) + 'Start: ' + str(self.start) + ' End: ' + str(self.end)
 
     def clean(self):
         if self.start and self.end and self.start > self.end:
-            raise ValidationError(_("Start time cannot later than end time."))
+            raise ValidationError(_("Start time cannot be later than end time."))
 
     def add_occurrence(self):
         # the event parameter in this case is a base event
         # Check to see if occurrence exists.  If not then create the occurrence and add the StaffTime
-        try:
-            occ = Occurrence.objects.get(event=self.event, original_start=self.event.start)
-        except Occurrence.DoesNotExist:
-            occ = Occurrence(event=self.event, start=self.event.start, end=self.event.end,
-                             original_start=self.event.start, original_end=self.event.end)
-            occ.save()
+        occ = Occurrence(event=self.event, start=self.occ_start, end=self.occ_end,
+                         original_start=self.occ_start, original_end=self.occ_end)
+        occ.save()
         self.occurrence = occ
         self.save()

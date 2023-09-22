@@ -9,9 +9,11 @@ from django.http import JsonResponse
 class CalendarView(TemplateView):
     def get_context_data(self, *args, **kwargs):
         form = CustomEventForm()
+        staffingForm = StaffTimeForm(auto_id="id_staff_%s")
         # form = StaffTimeForm()
         context = super(CalendarView, self).get_context_data(*args, **kwargs)
         context['eventForm'] = form
+        context['staffingForm'] = staffingForm
         context['base_url'] = self.request.build_absolute_uri()
         print(context['base_url'])
         return context

@@ -13,6 +13,7 @@ from .serializers import (
     StaffTimeSerializer,
     GetStaffTimeSerializer,
     OccurrenceSerializer,
+    GetOccurrenceSerializer,
     BaseEventSerializer,
     )
 from custom_scheduler.models import CustomEvent, EventType, Calendar, Staff, StaffTime
@@ -34,6 +35,7 @@ import datetime
 from schedule.utils import (
     check_calendar_permissions,
 )
+import copy
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -109,6 +111,7 @@ class StaffViewSet(viewsets.ModelViewSet):
 
 class StaffTimeViewSet(viewsets.ModelViewSet):
     queryset = StaffTime.objects.all()
+    serializer_class = GetStaffTimeSerializer
 
     def get_serializer_class(self):
         # Use SerializerForGET for GET requests
@@ -127,12 +130,22 @@ class StaffTimeViewSet(viewsets.ModelViewSet):
         return serializer_class(*args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        serializer = StaffTimeSerializer(context={'request': request}, data=request.data)
+        data = copy.copy(request.data)
+        occ_exists = True
+        try:
+            Occurrence.objects.get(id=request.data['occurrence'])
+        except Occurrence.DoesNotExist:
+            data['occurrence'] = ''
+            occ_exists = False
+        serializer = StaffTimeSerializer(context={'request': request}, data=data)
         # print(str(serializer.initial_data))
-
+        print(request.data)
         if serializer.is_valid():
             st = serializer.save()
-            st.add_occurrence()
+            if not occ_exists:
+                st.occ_start = data['occ_start']
+                st.occ_end = data['occ_end']
+                st.add_occurrence()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -141,6 +154,22 @@ class StaffTimeViewSet(viewsets.ModelViewSet):
 class OccurrenceViewSet(viewsets.ModelViewSet):
     queryset = Occurrence.objects.all()
     serializer_class = OccurrenceSerializer
+
+    def get_serializer_class(self):
+        # Use SerializerForGET for GET requests
+        if self.request.method == 'GET':
+            return GetOccurrenceSerializer
+        # Use SerializerForPOST for POST requests
+        elif self.request.method == 'POST':
+            return OccurrenceSerializer
+        # Use the default serializer for other HTTP methods
+        return super().get_serializer_class()
+
+    def get_serializer(self, *args, **kwargs):
+        # Override get_serializer to pass the request context to the serializer
+        serializer_class = self.get_serializer_class()
+        kwargs['context'] = self.get_serializer_context()
+        return serializer_class(*args, **kwargs)
 
 
 @require_POST
@@ -162,7 +191,6 @@ def api_move_or_resize_by_code(request):
 
 
 def _api_move_or_resize_by_code(user, id, existed, delta, resize, event_id):
-    print("hello we switched!!!")
     response_data = {}
     response_data["status"] = "PERMISSION DENIED"
 

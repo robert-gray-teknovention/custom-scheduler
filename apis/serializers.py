@@ -86,13 +86,21 @@ class GetStaffTimeSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = StaffTime
-        fields = ('__all__')
+        fields = ('url', 'id', 'staff_member', 'start', 'end', 'event', 'occurrence')
 
 
-class OccurrenceSerializer(serializers.HyperlinkedModelSerializer):
+class OccurrenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Occurrence
         fields = ('url', 'event', 'title', 'description', 'start', 'end', 'original_start', 'original_end',
                   'created_on',
                   'updated_on',
                   'staffing')
+
+
+class GetOccurrenceSerializer(serializers.HyperlinkedModelSerializer):
+    staffing = GetStaffTimeSerializer(many=True)
+
+    class Meta:
+        model = Occurrence
+        fields = ('__all__')

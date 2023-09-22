@@ -35,10 +35,10 @@ class CustomEventForm(forms.ModelForm):
 class StaffTimeForm(forms.ModelForm):
 
     class Meta:
-        exclude = []
+        exclude = ['event', 'occurrence']
         fields = "__all__"
         model = StaffTime
         widgets = {
-            'start': forms.DateInput(attrs={'type': 'date'}),
-            'end': forms.DateInput(attrs={'type': 'date'})
+            'start': forms.DateTimeInput(attrs={'class': 'timepicker', 'type': 'datetime-local'}),
+            'end': forms.DateInput(attrs={'class': 'timepicker', 'type': 'datetime-local'})
         }

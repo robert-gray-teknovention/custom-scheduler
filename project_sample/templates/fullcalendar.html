@@ -9,6 +9,7 @@
 {% block tab_id %}id="home_tab"{% endblock %}
 
 {% block extra_head %}
+{% load bootstrap_icons %}
 <link rel='stylesheet' type='text/css' href="{% static 'fullcalendar/dist/fullcalendar.css' %}" />
 <!--<script type='text/javascript' src="{% static 'moment/moment.js' %}"></script>-->
 
@@ -26,6 +27,7 @@
 <div id="calendar"></div>
 {% include 'partials/_event_manage.html' %}
 {% include 'partials/_event_view.html' %}
+{% include 'partials/_staffing_manage.html' %}
 <script type='text/javascript'>
 
 $(document).ready(function() {
@@ -83,20 +85,35 @@ function loadEventViewModal(event) {
       $('#event_id').val(event.event_id);
       $('#title').text(event.title);
       $('#description').text(event.description);
-      $('#start').text(new Date(event.start).toLocaleString());
-      $('#end').text(new Date(event.end).toLocaleString());
+      $('#start').text(new Date(event.start).toLocaleString("en-US",{timeZone:"UTC"}));
+      $('#end').text(new Date(event.end).toLocaleString("en-US",{timeZone:"UTC"}));
+      //Preload the staffing start and end datetimes
+
       if(event.rule){
         rule=event.rule;
       }
       $('#rule').html(rule);
       $('#v_calendar').text(result.calendar.name);
-      $('#end_recurring_period').text(event.end_recurring_period);
+      $('#end_recurring_period').text(new Date(event.end_recurring_period).toLocaleString());
       $('#color_event').css("background-color", event.color);
       $('#event_type').text(result.event_type.name);
+      $('#staffingTable > tbody').empty();
+      if(event.existed) {
+        $('#existed').val(event.existed);
+        $.ajax({
+          type: 'GET',
+          dataType: 'json',
+          url: '{% url 'occurrence-list' %}' + event.id + '/?format=json',
+          success: function(result) {
+            for(let x in result.staffing){
+              $("#staffingTable > tbody:last-child").append("<tr id='staff_row_" + result.staffing[x].id + "'><td>" + result.staffing[x].staff_member.name + "</td><td>" + new Date(result.staffing[x].start).toLocaleString() + "</td><td>" + new Date(result.staffing[x].end).toLocaleString() + "</td><td><button onclick='removeStaffing(" + result.staffing[x].id + ")'></button></td></tr>");
+            }
+
+          }
+        });
+      }
       $('#eventViewModal').modal('show');
       //Load eventManageModal
-      //$('#id').val(event.id);
-      //$('#event_id').val(event.event_id);
       $('#eventForm').trigger('reset');
       $('#id_title').val(event.title);
       $('#id_description').val(event.description);
@@ -111,17 +128,20 @@ function loadEventViewModal(event) {
       $('#id_end_recurring_period').val(event.end_recurring_period);
       $('#id_color_event').val(event.color);
       $('#id_event_type').val(result.event_type.id).change();
+      //Load staffingModal
+      console.log(new Date(event.start).toISOString().slice(0, -5));
+      $('#id_staff_start').val(new Date(event.start).toISOString().slice(0, -5));
+      $('#id_staff_end').val(new Date(event.end).toISOString().slice(0, -5));
+      $('#occ_start').val(new Date(event.start).toISOString().slice(0, -5));
+      $('#occ_end').val(new Date(event.end).toISOString().slice(0, -5));
     },
     error:function(xhr) {
       alert("I'm sorry but your message failed to send "  + xhr.status)
     }
 
   });
-
-
-
-
 }
+
 
 function moveOrResizeEvent(event, delta, resize, revertFunc) {
   $.ajaxSetup({
